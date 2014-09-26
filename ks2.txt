@@ -35,9 +35,9 @@ net-snmp-perl
 %post --log=/root/ks-post.log
 echo "Configuring  network connection"
 
-ifdown eth0 
-ifup eth0
-ifconfig eth0
+#ifdown eth0 
+#ifup eth0
+#ifconfig eth0
 
 #ifconfig eth0 172.16.25.125 netmask 255.255.255.224 broadcast 172.16.25.63
 #ifdown eth0
@@ -92,7 +92,7 @@ yum -yv install open-vm-tools
 #echo "Updating packages"
 #yum -yv update
 
-ifdown eth0
+#ifdown eth0
 
 #OPCIONAL
 #echo "Setting Permanent Environment Variables"
