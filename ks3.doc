@@ -65,15 +65,19 @@ chmod u+x /root/alma/downloads/apache-ant-1.9.4/bin/ant
 
 #Download Tomcat
 echo "Downloading Tomcat 7.0.40"
-wget http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.40/src/apache-tomcat-7.0.40-src.tar.gz
+#wget http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.40/src/apache-tomcat-7.0.40-src.tar.gz
+wget  http://github.com/diegobarriga/alma/raw/master/tomcat7.zip --no-check-certificate
 
 echo "Unpacking Tomcat"
-tar zxf apache-tomcat-7.0.40-src.tar.gz
+unzip tomcat7.zip
 
 echo "Installing Tomcat"
-cd /root/alma/downloads/apache-tomcat-7.0.40-src 
-ant
-cd
+cd tomcat7
+yum install 
+
+#cd /root/alma/downloads/apache-tomcat-7.0.40-src 
+#ant
+#cd
 
 echo "Activating services NTPD and SNMPD"
 chkconfig snmpd on

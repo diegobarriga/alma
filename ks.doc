@@ -82,8 +82,31 @@ chkconfig ntpd on
 echo "Registering with RH"
 /usr/sbin/subscription-manager register --username=3373001 --password=password --serverurl=subscription.rhn.redhat.com --autosubscribe
 
-echo "Installing open VMware tools"
-yum -yv install open-vm-tools
+#echo "Installing open VMware tools"
+#yum -yv install open-vm-tools
+
+echo "Downloading VMware Tools Keys"
+mkdir /tmp/vmware-tools
+mkdir /tmp/vmware-tools/keys
+cd /tmp/vmware-tools/keys
+wget -r -np -nd http://packages.vmware.com/tools/keys/
+
+echo "Importing Keys"
+rpm --import /tmp/vmware-tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub
+rpm --import /tmp/vmware-tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub
+
+echo "Linking to external repository"
+cd
+cat <<EOF >/etc/yum.repos.d/vmware-tools.repo
+[vmware-tools]
+name=VMware Tools
+baseurl=http://packages.vmware.com/tools/esx/5.5u2/rhel5/i386
+enabled=1
+gpgcheck=1
+EOF
+
+echo "Installing VMware Tools"
+yum -yv install vmware-tools-esx
 
 #echo "Updating packages"
 #yum -yv update
@@ -114,7 +137,7 @@ TOMCAT_HOME=/root/alma/downloads/apache-tomcat-7.0.40-src/output/build
 CATALINA_HOME=/root/alma/downloads/apache-tomcat-7.0.40-src/output/build
 TOMCAT_START_SCRIPT=$TOMCAT_HOME/bin/startup.sh
 TOMCAT_STOP_SCRIPT=$TOMCAT_HOME/bin/shutdown.sh
-CATALINA_PID=/var/run/tomcat.pid
+#CATALINA_PID=/var/run/tomcat.pid
  
 $TEST -x $TOMCAT_START_SCRIPT || exit 0
 $TEST -x $TOMCAT_STOP_SCRIPT || exit 0
@@ -147,9 +170,6 @@ case "$1" in
         sleep 30
         start
         ;;
-	status)
-		status -p "$CATALINA_PID" -l $prog $exec
-		;;
     *)
         $ECHO "Usage: tomcat {start|stop|restart}"
         exit 1
@@ -159,7 +179,3 @@ EOF
 
 sudo chmod 755 /etc/init.d/tomcat
 chkconfig tomcat --level 2345 on
-
-service tomcat stop
-PID=!$
-echo $PID > /var/run/tomcat.pid
